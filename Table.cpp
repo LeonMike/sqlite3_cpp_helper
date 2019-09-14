@@ -15,7 +15,7 @@
   along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <table.hpp>
+#include <Table.hpp>
 #include <sstream>
 #include <iostream>
 
