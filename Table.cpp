@@ -23,59 +23,6 @@ using namespace std;
 
 namespace sqlite3_cpp_helper_v2 {
 
-  string COLUMN_DESC::operator ()() {
-    return value;
-  }
-  
-  string COLUMN_DESC::Set(int newValue) {
-    isNull = true;
-    if (&newValue != NULL) {
-      stringstream ss;
-      ss << newValue;
-      value = ss.str();
-      isNull = false;
-    }
-    return value;
-  }
-
-  string COLUMN_DESC::Set(bool newValue) {
-    isNull = true;
-    if (&newValue != NULL) {
-      stringstream ss;
-      ss << newValue;
-      value = ss.str();
-      isNull = false;
-    }
-    return value;
-  }
-  
-  string COLUMN_DESC::Set(float newValue) {
-    isNull = true;
-    if (&newValue != NULL) {
-      stringstream ss;
-      ss << newValue;
-      value = ss.str();
-      isNull = false;
-    }
-    return value;
-  }
-
-  string COLUMN_DESC::Set(string newValue) {
-    isNull = false;
-    value = newValue;
-    return value;
-  }
-
-  string COLUMN_DESC::Set(const char *newValue) {
-    isNull = true;
-    if (newValue != NULL) {
-      stringstream ss(newValue);
-      value = ss.str();
-      isNull = false;
-    }
-    return value;
-  }
-  
   Table::Table(sqlite3 *db): Db(db) {}
   Table::Table(Table &base): Db(base.Db) {}
   Table::~Table() { sqlite3_close(Db); columns.clear(); }
@@ -124,31 +71,31 @@ namespace sqlite3_cpp_helper_v2 {
     }
   }
   
-  Table &Table::integer(string name) { create_column(name, "INT"); return *this; }
-  Table &Table::text(string name) { create_column(name, "TEXT"); return *this; }
-  Table &Table::text(string name, int max_length) { create_column(name, "VARCHAR", max_length); return *this; }
-  Table &Table::date(string name) { create_column(name, "DATE"); return *this; }
-  Table &Table::real(string name) { create_column(name, "REAL"); return *this; }
-  Table &Table::boolean(string name) { create_column(name, "BOOLEAN"); return *this; }
+  Table *Table::integer(string name) { create_column(name, "INT"); return this; }
+  Table *Table::text(string name) { create_column(name, "TEXT"); return this; }
+  Table *Table::text(string name, int max_length) { create_column(name, "VARCHAR", max_length); return this; }
+  Table *Table::date(string name) { create_column(name, "DATE"); return this; }
+  Table *Table::real(string name) { create_column(name, "REAL"); return this; }
+  Table *Table::boolean(string name) { create_column(name, "BOOLEAN"); return this; }
   
-  Table &Table::primary() { columns[last_column].primary_key = true; return *this; }
-  Table &Table::defaultValue(int value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return *this; }
-  Table &Table::defaultValue(bool value) { stringstream ss; ss << (value ? 1 : 0); columns[last_column].default_value = ss.str(); return *this; }
-  Table &Table::defaultValue(float value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return *this; }
-  Table &Table::defaultValue(string value) { columns[last_column].default_value = "'" + value + "'"; return *this; }
-  Table &Table::defaultValue(const char *value) { stringstream ss(value); columns[last_column].default_value = "'" + ss.str() + "'"; return *this; }
-  Table &Table::foreign(string column) { columns[column].foreign_key = true; last_column = column; return *this; }
-  Table &Table::references(string table, string column) { columns[last_column].reference_table = table; columns[last_column].reference_column = column; return *this; }
+  Table *Table::primary() { columns[last_column].primary_key = true; return this; }
+  Table *Table::defaultValue(int value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return this; }
+  Table *Table::defaultValue(bool value) { stringstream ss; ss << (value ? 1 : 0); columns[last_column].default_value = ss.str(); return this; }
+  Table *Table::defaultValue(float value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return this; }
+  Table *Table::defaultValue(string value) { columns[last_column].default_value = "'" + value + "'"; return this; }
+  Table *Table::defaultValue(const char *value) { stringstream ss(value); columns[last_column].default_value = "'" + ss.str() + "'"; return this; }
+  Table *Table::foreign(string column) { columns[column].foreign_key = true; last_column = column; return this; }
+  Table *Table::references(string table, string column) { columns[last_column].reference_table = table; columns[last_column].reference_column = column; return this; }
 
-  Table &Table::NewRow() {
+  Table *Table::NewRow() {
     for (COLUMN col : columns) {
       col.second.value = "";
       col.second.isNull = true;
     }
-    return *this;
+    return this;
   }
   
-  Table &Table::Set(string column, int value) {
+  Table *Table::Set(string column, int value) {
     columns[column].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -156,10 +103,10 @@ namespace sqlite3_cpp_helper_v2 {
       columns[column].value = ss.str();
       columns[column].isNull = false;
     }
-    return *this;
+    return this;
   }
 
-  Table &Table::Set(string column, bool value) {
+  Table *Table::Set(string column, bool value) {
     columns[column].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -167,10 +114,10 @@ namespace sqlite3_cpp_helper_v2 {
       columns[column].value = ss.str();
       columns[column].isNull = false;
     }
-    return *this;
+    return this;
   }
   
-  Table &Table::Set(string column, float value) {
+  Table *Table::Set(string column, float value) {
     columns[column].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -178,26 +125,26 @@ namespace sqlite3_cpp_helper_v2 {
       columns[column].value = ss.str();
       columns[column].isNull = false;
     }
-    return *this;
+    return this;
   }
 
-  Table &Table::Set(string column, string value) {
+  Table *Table::Set(string column, string value) {
     columns[column].value = value;
     columns[column].isNull = false;
-    return *this;
+    return this;
   }
 
-  Table &Table::Set(string column, const char *value) {
+  Table *Table::Set(string column, const char *value) {
     columns[column].isNull = true;
     if (&value != NULL) {
       stringstream ss(value);
       columns[column].value = ss.str();
       columns[column].isNull = false;
     }
-    return *this;
+    return this;
   }
 
-  Table &Table::Save() {
+  Table *Table::Save() {
     char *zErrMsg = 0;
     string command = sqlSave();
     cout << command << endl;
@@ -205,7 +152,7 @@ namespace sqlite3_cpp_helper_v2 {
     if (rc != SQLITE_OK) {
       cout << "SQL Error: " << zErrMsg << endl;
     }
-    return *this;
+    return this;
   }
 
   string Table::sqlSave() {

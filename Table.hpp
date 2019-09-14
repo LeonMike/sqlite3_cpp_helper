@@ -17,41 +17,12 @@
 
 #pragma once
 
-#include <sqlite3.h>
-#include <map>
-#include <string>
-#include <sstream>
+#include <Record.hpp>
 
 using namespace std;
 
 namespace sqlite3_cpp_helper_v2 {
 
-  struct COLUMN_DESC {
-    string type;
-    int    max_length;
-    bool   primary_key;
-    bool   isNull;
-    bool   not_null;
-    string default_value;
-    string value;
-    bool   foreign_key;
-    string reference_table;
-    string reference_column;
-
-    string operator()();
-    
-    string Set(int newValue);
-    string Set(bool newValue);
-    string Set(float newValue);
-    string Set(string newValue);
-    string Set(const char *newValue);
-  };
-
-  typedef pair<string, COLUMN_DESC> COLUMN;
-  typedef pair<int, string> COLUMNS_ORDER_ITEM;
-  typedef map<string, COLUMN_DESC> COLUMNS_MAP;
-  typedef map<int, string> COLUMNS_ORDER;
-  
   class Table {
   private:
     sqlite3 *Db;
@@ -73,29 +44,29 @@ namespace sqlite3_cpp_helper_v2 {
 
     string name;
     
-    Table &integer(string name);
-    Table &text(string name);
-    Table &text(string name, int max);
-    Table &date(string name);
-    Table &real(string name);
-    Table &boolean(string name);
+    Table *integer(string name);
+    Table *text(string name);
+    Table *text(string name, int max);
+    Table *date(string name);
+    Table *real(string name);
+    Table *boolean(string name);
     
-    Table &primary();
-    Table &defaultValue(int value);
-    Table &defaultValue(bool value);
-    Table &defaultValue(float value);
-    Table &defaultValue(string value);
-    Table &defaultValue(const char *value);
-    Table &foreign(string column);
-    Table &references(string table, string column);
+    Table *primary();
+    Table *defaultValue(int value);
+    Table *defaultValue(bool value);
+    Table *defaultValue(float value);
+    Table *defaultValue(string value);
+    Table *defaultValue(const char *value);
+    Table *foreign(string column);
+    Table *references(string table, string column);
 
-    Table &NewRow();
-    Table &Set(string column, int value);
-    Table &Set(string column, bool value);
-    Table &Set(string column, float value);
-    Table &Set(string column, string value);
-    Table &Set(string column, const char *value);
-    Table &Save();
+    Table *NewRow();
+    Table *Set(string column, int value);
+    Table *Set(string column, bool value);
+    Table *Set(string column, float value);
+    Table *Set(string column, string value);
+    Table *Set(string column, const char *value);
+    Table *Save();
     
     string toSql();
 
