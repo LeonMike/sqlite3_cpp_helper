@@ -15,9 +15,9 @@
   along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <database.hpp>
+#include <Database.hpp>
 
-namespace sqlite_cpp_helper {
+namespace sqlite3_cpp_helper_v2 {
 
   Database::Database(string filepath): db_filepath(filepath) {
     sqlite3_open(db_filepath.c_str(), &Db);

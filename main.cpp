@@ -1,8 +1,10 @@
 #include <iostream>
-#include "Database.hpp"
+#include <Database.hpp>
+
+using namespace sqlite3_cpp_helper_v2;
 
 int main() {
-  Database *db = new Database();
+  Database *db = new Database("t.db");
   
   delete db;
   return 0;

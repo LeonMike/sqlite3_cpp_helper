@@ -21,7 +21,7 @@
 
 using namespace std;
 
-namespace sqlite_cpp_helper {
+namespace sqlite3_cpp_helper_v2 {
 
   string COLUMN_DESC::operator ()() {
     return value;

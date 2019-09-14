@@ -20,11 +20,11 @@
 #include <sqlite3.h>
 #include <string>
 #include <map>
-#include <table.hpp>
+#include <Table.hpp>
 
 using namespace std;
 
-namespace sqlite_cpp_helper {
+namespace sqlite3_cpp_helper_v2 {
 
   typedef map<string, Table *> DB_TABLES_MAP;
   
