@@ -26,40 +26,18 @@ namespace sqlite3_cpp_helper_v2 {
   class Table {
   private:
     sqlite3 *Db;
-    COLUMNS_MAP columns;
-    COLUMNS_ORDER order;
+    Record *Record;
 
-    string last_column;
-
-    void create_column(string name, string type);
-    void create_column(string name, string type, int max_length);
-
-    string sqlSave();
-  public:
+  public:    
     Table(sqlite3 *db);
+    Table(string tableName);
     Table(Table &);
     ~Table();
 
-    void   Create();
-
     string name;
     
-    Table *integer(string name);
-    Table *text(string name);
-    Table *text(string name, int max);
-    Table *date(string name);
-    Table *real(string name);
-    Table *boolean(string name);
+    void   Create();
     
-    Table *primary();
-    Table *defaultValue(int value);
-    Table *defaultValue(bool value);
-    Table *defaultValue(float value);
-    Table *defaultValue(string value);
-    Table *defaultValue(const char *value);
-    Table *foreign(string column);
-    Table *references(string table, string column);
-
     Table *NewRow();
     Table *Set(string column, int value);
     Table *Set(string column, bool value);
@@ -68,7 +46,7 @@ namespace sqlite3_cpp_helper_v2 {
     Table *Set(string column, const char *value);
     Table *Save();
     
-    string toSql();
+    string generateSql();
 
     COLUMN_DESC &operator [](string name);
     string operator ()(string value);

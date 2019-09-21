@@ -25,6 +25,8 @@ namespace sqlite3_cpp_helper_v2 {
 
   Table::Table(sqlite3 *db): Db(db) {}
   Table::Table(Table &base): Db(base.Db) {}
+  Table::Table(string tableName) { name = tableName; }
+  //Table::Table(const char *tableName) { name = tableName; }
   Table::~Table() { sqlite3_close(Db); columns.clear(); }
 
   void Table::create_column(string name, string type) {
@@ -63,9 +65,9 @@ namespace sqlite3_cpp_helper_v2 {
   
   void Table::Create() {
     char *zErrMsg = 0;
-    cout << toSql() << endl;
+    cout << generateSql() << endl;
     //int rc = sqlite3_exec(Db, toSql(), callback, 0, zErrMsg);
-    int rc = sqlite3_exec(Db, toSql().c_str(), NULL, NULL, &zErrMsg);
+    int rc = sqlite3_exec(Db, generateSql().c_str(), NULL, NULL, &zErrMsg);
     if (rc != SQLITE_OK) {
       cout << "SQL Error: " << zErrMsg << endl;
     }
@@ -191,44 +193,10 @@ namespace sqlite3_cpp_helper_v2 {
     return result;
   }
   
-  string Table::toSql() {
+  string Table::generateSql() {
     string result = "CREATE TABLE " + name;
     if (columns.size() > 0) {
-      stringstream columnsStr("");
-      string foreignsStr = "";
-      /*for (COLUMN col : columns) {
-	cout << "Col (" << col.first << ")" << endl <<
-	  "\ttype:\t" << col.second.type << endl <<
-	  "\tmax_length:\t" << col.second.max_length << endl <<
-	  "\tprimary_key:\t" << col.second.primary_key << endl <<
-	  "\tnot_null:\t" << col.second.not_null << endl <<
-	  "\tdefault_value:\t" << col.second.default_value << endl <<
-	  "\tvalue:\t" << col.second.value << endl <<
-	  "\tforeign_key:\t" << col.second.foreign_key << endl <<
-	  "\treference_table:\t" << col.second.reference_table << endl <<
-	  "\treference_colum:\t" << col.second.reference_column << endl;
-      }*/
-      for (COLUMNS_ORDER_ITEM item : order) {
-	if (columnsStr.str() != "") {
-	  columnsStr << ", ";
-	}
-	if (columns[item.second].foreign_key) {
-	  foreignsStr += ", " \
-	    "FOREIGN KEY(" + item.second + ") "				\
-	    "REFERENCES " + columns[item.second].reference_table + "(" + columns[item.second].reference_column + ")";
-	}
-	columnsStr <<
-	  item.second << " " <<
-	  columns[item.second].type;
-	if (columns[item.second].max_length != 0) {
-	  columnsStr << "(" << columns[item.second].max_length << ")";
-	}
-	columnsStr <<
-	  (columns[item.second].primary_key ? " PRIMARY KEY" : "") <<
-	  (columns[item.second].default_value != "" ? " DEFAULT " + columns[item.second].default_value : "") <<
-	  (columns[item.second].not_null ? " NOT NULL" : "");
-      }
-      result += " (" + columnsStr.str() + foreignsStr + ")";
+      
     }
     return result + ";";
   }

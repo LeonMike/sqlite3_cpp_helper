@@ -11,21 +11,23 @@ int main() {
   //   ->text("name")
   //   ->Create();
   // delete db;
-  Record *r = new Record();
-  r
-    ->integer("Id")
-    ->text("text1")
-    ->date("date1")
-    ->real("real1");
-  r->Set("Id", 1);
-  r->Set("text1", "texto_1");
-  r->Set("date1", "01-01-2019");
-  r->Set("real1", 2.03f);
-  cout << r->GenerationSql() << endl;
-  cout << "\tId = " << (*r)["Id"] << endl;
-  cout << "\ttext1 = " << (*r)["text1"] << endl;
-  cout << "\tdate1 = " << (*r)["date1"] << endl;
-  cout << "\treal1 = " << (*r)["real1"]<< endl;
-  delete r;
+  // Record *r = new Record();
+  // r
+  //   ->integer("Id")
+  //   ->text("text1")
+  //   ->date("date1")
+  //   ->real("real1");
+  // (*r)["Id"] = "2";
+  // (*r)["text1"] = "texto_2";
+  // (*r)["date1"] = "01-01-2019";
+  // (*r)["real1"] = 2.03f;
+  // cout << r->GenerateSql() << endl;
+  // cout << "\tId = " << (*r)("Id") << endl;
+  // cout << "\ttext1 = " << (*r)("text1") << endl;
+  // cout << "\tdate1 = " << (*r)("date1") << endl;
+  // cout << "\treal1 = " << (*r)("real1") << endl;
+  // delete r;
+  Table *t = new Table("tab");
+  cout << t->generateSql() << endl;
   return 0;
 }
