@@ -31,6 +31,8 @@ namespace sqlite3_cpp_helper_v2 {
   class Database {
   private:
     string db_filepath;
+
+  protected:
     sqlite3 *Db;
     
   public:

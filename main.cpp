@@ -28,23 +28,30 @@ void testing2() {
   // Table *t = new Table("tab", (new Model())->integer("Id")->text("text")->date("date1")->real("real1"));
   // cout << t->GenerateSql() << endl;
   
-  tt *t = new tt();
-  cout << t->GenerateSql() << endl;
+  tt *t = new tt("tab.db");
+  /*cout << (*t)["testing_table"].NewRow()
+    ->Set("Id", 0)
+    ->Set("name", "Ronny Barrera")->GenerateSql();
+    (*t)["testing_table"].Save();*/
+  //(*t)["testing_table"].Get();
+  delete t;
 }
 
 
 
 int main() {
-   Database *db = new Database("t.db");
-   db->New_Table("testing_table",
+  //Database *db = new Database("t.db");
+   /*db->New_Table("testing_table",
     		 (new Model())
     		 ->integer("id")
     		 ->text("name"));
-   (*db)["testing_table"].Create();
+		 (*db)["testing_table"].Create();*/
+   
    // cout << (*db)["testing_table"].NewRow()
    //   ->Set("Id", 0)
    //  ->Set("name", "Ronny Barrera")->GenerateSql();
    // (*db)["testing_table"].Save();
-   delete db;
+   //delete db;
+  testing2();
   return 0;
 }
