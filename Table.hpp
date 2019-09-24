@@ -25,12 +25,13 @@ namespace sqlite3_cpp_helper_v2 {
 
   class Table {
   private:
-    sqlite3 *Db;
     bool    isInserting;
     string  lastInsertionCommand;
 
   protected:
+    sqlite3 *Db;
     Model *tableModel;
+    static int CallbackHelper(void *objPtr, int argc, char **argv, char **azColName);
 
   public:
     Table();
@@ -43,6 +44,8 @@ namespace sqlite3_cpp_helper_v2 {
     // ~Table();
 
     string name;
+
+    int QueryCallback(int argc, char **argv, char **azColName);
 
     //virtual void CreateModel() = 0;
     
@@ -57,6 +60,8 @@ namespace sqlite3_cpp_helper_v2 {
     Table *Save();
     
     string GenerateSql();
+    
+    void Get();
 
     // COLUMN_DESC &operator [](string name);
     // string operator ()(string value);

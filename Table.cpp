@@ -28,6 +28,17 @@ namespace sqlite3_cpp_helper_v2 {
   Table::Table(sqlite3 *db, string name): Db(db), name(name) {}
   Table::Table(string name, Model* recordModel): name(name), tableModel(recordModel) {}
   Table::Table(sqlite3 *db, string tableName, Model* tableModelToSave): Db(db) { name = tableName; tableModel = tableModelToSave; }
+
+  int Table::CallbackHelper(void *objPtr, int argc, char **argv, char **azColName) {
+    return ((Table *)objPtr)->QueryCallback(argc, argv, azColName);
+  }
+
+  int Table::QueryCallback(int argc, char **argv, char **azColName) {
+    for (int i = 0; i < argc; i++) {
+      cout << "" << azColName[i] << " = " << (argv[i] ? argv[i] : "NULL") << endl;
+    }
+    return 0;
+  }
   
   // Table::Table(sqlite3 *db): Db(db) {}
   // Table::Table(Table &base): Db(base.Db) {}
@@ -143,6 +154,14 @@ namespace sqlite3_cpp_helper_v2 {
     return result + ";";
   }
 
+  void Table::Get() {
+    char *zErrMsg = 0;
+    int rc = sqlite3_exec(Db, ("SELECT * FROM " + name).c_str(), Table::CallbackHelper, 0, &zErrMsg);
+    if (rc != SQLITE_OK) {
+      cout << "Error: " << zErrMsg << endl;
+      sqlite3_free(zErrMsg);
+    }
+  }
 
   // COLUMN_DESC &Table::operator [](string name) {
   //   return columns[name.c_str()];

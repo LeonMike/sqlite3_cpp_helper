@@ -33,7 +33,7 @@ void testing2() {
     ->Set("Id", 0)
     ->Set("name", "Ronny Barrera")->GenerateSql();
     (*t)["testing_table"].Save();*/
-  //(*t)["testing_table"].Get();
+  (*t)["testing_table"].Get();
   delete t;
 }
 
