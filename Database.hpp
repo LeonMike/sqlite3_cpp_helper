@@ -41,6 +41,7 @@ namespace sqlite3_cpp_helper_v2 {
     
     //Table &New_Table(string name);
     Table *New_Table(string name);
+    Table *New_Table(string name, Model *tableModel);
 
     Table &operator [](string name);
     

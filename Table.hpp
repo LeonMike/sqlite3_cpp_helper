@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <Record.hpp>
+#include <Model.hpp>
 
 using namespace std;
 
@@ -26,17 +26,27 @@ namespace sqlite3_cpp_helper_v2 {
   class Table {
   private:
     sqlite3 *Db;
-    Record *Record;
+    bool    isInserting;
+    string  lastInsertionCommand;
 
-  public:    
-    Table(sqlite3 *db);
-    Table(string tableName);
-    Table(Table &);
-    ~Table();
+  protected:
+    Model *tableModel;
+
+  public:
+    Table();
+    Table(sqlite3 *db, string name);
+    Table(string name, Model *tableModel);
+    Table(sqlite3 *db, string name, Model *tableModel);
+    // Table(sqlite3 *db);
+    // Table(string tableName);
+    // Table(Table &);
+    // ~Table();
 
     string name;
+
+    //virtual void CreateModel() = 0;
     
-    void   Create();
+    void Create();
     
     Table *NewRow();
     Table *Set(string column, int value);
@@ -46,10 +56,10 @@ namespace sqlite3_cpp_helper_v2 {
     Table *Set(string column, const char *value);
     Table *Save();
     
-    string generateSql();
+    string GenerateSql();
 
-    COLUMN_DESC &operator [](string name);
-    string operator ()(string value);
+    // COLUMN_DESC &operator [](string name);
+    // string operator ()(string value);
   };
   
 }

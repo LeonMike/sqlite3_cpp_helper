@@ -1,16 +1,11 @@
 #include <iostream>
 #include <Database.hpp>
+#include <tt.hpp>
 
 using namespace std;
 using namespace sqlite3_cpp_helper_v2;
 
-int main() {
-  // Database *db = new Database("t.db");
-  // db->New_Table("testing_table")
-  //   ->integer("id")
-  //   ->text("name")
-  //   ->Create();
-  // delete db;
+void testing1() {
   // Record *r = new Record();
   // r
   //   ->integer("Id")
@@ -27,7 +22,29 @@ int main() {
   // cout << "\tdate1 = " << (*r)("date1") << endl;
   // cout << "\treal1 = " << (*r)("real1") << endl;
   // delete r;
-  Table *t = new Table("tab");
-  cout << t->generateSql() << endl;
+}
+
+void testing2() {
+  // Table *t = new Table("tab", (new Model())->integer("Id")->text("text")->date("date1")->real("real1"));
+  // cout << t->GenerateSql() << endl;
+  
+  tt *t = new tt();
+  cout << t->GenerateSql() << endl;
+}
+
+
+
+int main() {
+   Database *db = new Database("t.db");
+   db->New_Table("testing_table",
+    		 (new Model())
+    		 ->integer("id")
+    		 ->text("name"));
+   (*db)["testing_table"].Create();
+   // cout << (*db)["testing_table"].NewRow()
+   //   ->Set("Id", 0)
+   //  ->Set("name", "Ronny Barrera")->GenerateSql();
+   // (*db)["testing_table"].Save();
+   delete db;
   return 0;
 }

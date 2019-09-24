@@ -15,9 +15,10 @@
   along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <Record.hpp>
+#include <Model.hpp>
 #include <sstream>
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 
@@ -115,11 +116,14 @@ namespace sqlite3_cpp_helper_v2 {
     return value;
   }
   
-  Record::Record() {}
-  //Record::Record(Table &base): {}
-  Record::~Record() { columns.clear(); }
+  Model::Model() {}
+  //Model::Model(Table &base): {}
+  Model::~Model() { columns.clear(); }
 
-  void Record::create_column(string name, string type) {
+  int Model::ColumnsCount() { return columns.size(); }
+  
+  void Model::create_column(string name, string type) {
+    isInserting = false;
     COLUMN_DESC desc;
     desc.type = type;
     desc.max_length = 0;
@@ -136,7 +140,8 @@ namespace sqlite3_cpp_helper_v2 {
     last_column = name;
   }
 
-  void Record::create_column(string name, string type, int max_length) {
+  void Model::create_column(string name, string type, int max_length) {
+    isInserting = false;
     COLUMN_DESC desc;
     desc.type = type;
     desc.max_length = max_length;
@@ -152,24 +157,35 @@ namespace sqlite3_cpp_helper_v2 {
     order.insert(COLUMNS_ORDER_ITEM(columns.size() - 1, name));
     last_column = name;
   }
-  
-  Record *Record::integer(string name) { create_column(name, "INT"); return this; }
-  Record *Record::text(string name) { create_column(name, "TEXT"); return this; }
-  Record *Record::text(string name, int max_length) { create_column(name, "VARCHAR", max_length); return this; }
-  Record *Record::date(string name) { create_column(name, "DATE"); return this; }
-  Record *Record::real(string name) { create_column(name, "REAL"); return this; }
-  Record *Record::boolean(string name) { create_column(name, "BOOLEAN"); return this; }
-  
-  Record *Record::primary() { columns[last_column].primary_key = true; return this; }
-  Record *Record::defaultValue(int value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return this; }
-  Record *Record::defaultValue(bool value) { stringstream ss; ss << (value ? 1 : 0); columns[last_column].default_value = ss.str(); return this; }
-  Record *Record::defaultValue(float value) { stringstream ss; ss << value; columns[last_column].default_value = ss.str(); return this; }
-  Record *Record::defaultValue(string value) { columns[last_column].default_value = "'" + value + "'"; return this; }
-  Record *Record::defaultValue(const char *value) { stringstream ss(value); columns[last_column].default_value = "'" + ss.str() + "'"; return this; }
-  Record *Record::foreign(string column) { columns[column].foreign_key = true; last_column = column; return this; }
-  Record *Record::references(string table, string column) { columns[last_column].reference_table = table; columns[last_column].reference_column = column; return this; }
 
-  Record *Record::Set(string columnName, int value) {
+  Model *Model::New() {
+    isInserting = true;
+    assert(columns.size() > 0);
+    cout << "\033[1;33mCleaning model...\033[0;0m" << endl;
+    for (COLUMN col : columns) {
+      col.second.value = "";
+      col.second.isNull = true;
+    }
+    return this;
+  }
+  
+  Model *Model::integer(string name) { create_column(name, "INT"); return this; }
+  Model *Model::text(string name) { create_column(name, "TEXT"); return this; }
+  Model *Model::text(string name, int max_length) { create_column(name, "VARCHAR", max_length); return this; }
+  Model *Model::date(string name) { create_column(name, "DATE"); return this; }
+  Model *Model::real(string name) { create_column(name, "REAL"); return this; }
+  Model *Model::boolean(string name) { create_column(name, "BOOLEAN"); return this; }
+  
+  Model *Model::primary() { isInserting = false; columns[last_column].primary_key = true; return this; }
+  Model *Model::defaultValue(int value) { stringstream ss; isInserting = false; ss << value; columns[last_column].default_value = ss.str(); return this; }
+  Model *Model::defaultValue(bool value) { stringstream ss; isInserting = false; ss << (value ? 1 : 0); columns[last_column].default_value = ss.str(); return this; }
+  Model *Model::defaultValue(float value) { stringstream ss; isInserting = false; ss << value; columns[last_column].default_value = ss.str(); return this; }
+  Model *Model::defaultValue(string value) { isInserting = false; columns[last_column].default_value = "'" + value + "'"; return this; }
+  Model *Model::defaultValue(const char *value) { stringstream ss(value); isInserting = false; columns[last_column].default_value = "'" + ss.str() + "'"; return this; }
+  Model *Model::foreign(string column) { isInserting = false; columns[column].foreign_key = true; last_column = column; return this; }
+  Model *Model::references(string table, string column) { isInserting = false; columns[last_column].reference_table = table; columns[last_column].reference_column = column; return this; }
+
+  Model *Model::Set(string columnName, int value) {
     columns[columnName].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -181,7 +197,7 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
 
-  Record *Record::Set(string columnName, bool value) {
+  Model *Model::Set(string columnName, bool value) {
     columns[columnName].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -193,7 +209,7 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
   
-  Record *Record::Set(string columnName, float value) {
+  Model *Model::Set(string columnName, float value) {
     columns[columnName].isNull = true;
     if (&value != NULL) {
       stringstream ss("");
@@ -205,7 +221,7 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
 
-  Record *Record::Set(string columnName, string value) {
+  Model *Model::Set(string columnName, string value) {
     cout << "storing: " << value << endl;
     //columns[columnName].value = value;
     columns[columnName] = value;
@@ -213,7 +229,7 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
 
-  Record *Record::Set(string columnName, const char *newValue) {
+  Model *Model::Set(string columnName, const char *newValue) {
     columns[columnName].isNull = true;
     if (newValue != NULL) {
       stringstream ss(newValue);
@@ -223,49 +239,66 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
   
-  string Record::GenerateSql() {
+  string Model::GenerateSql() {
     string result = "";
-    if (columns.size() > 0) {
-      stringstream columnsStr("");
-      string foreignsStr = "";
-      for (COLUMNS_ORDER_ITEM item : order) {
-	if (columnsStr.str() != "") {
-	  columnsStr << ", ";
+    if (!isInserting) {
+      if (columns.size() > 0) {
+	stringstream columnsStr("");
+	string foreignsStr = "";
+	for (COLUMNS_ORDER_ITEM item : order) {
+	  if (columnsStr.str() != "") {
+	    columnsStr << ", ";
+	  }
+	  if (columns[item.second].foreign_key) {
+	    foreignsStr += ", "						\
+	      "FOREIGN KEY(" + item.second + ") "			\
+	      "REFERENCES " + columns[item.second].reference_table + "(" + columns[item.second].reference_column + ")";
+	  }
+	  columnsStr <<
+	    item.second << " " <<
+	    columns[item.second].type;
+	  if (columns[item.second].max_length != 0) {
+	    columnsStr << "(" << columns[item.second].max_length << ")";
+	  }
+	  columnsStr <<
+	    (columns[item.second].primary_key ? " PRIMARY KEY" : "") <<
+	    (columns[item.second].default_value != "" ? " DEFAULT " + columns[item.second].default_value : "") <<
+	    (columns[item.second].not_null ? " NOT NULL" : "");
 	}
-	if (columns[item.second].foreign_key) {
-	  foreignsStr += ", " \
-	    "FOREIGN KEY(" + item.second + ") "				\
-	    "REFERENCES " + columns[item.second].reference_table + "(" + columns[item.second].reference_column + ")";
-	}
-	columnsStr <<
-	  item.second << " " <<
-	  columns[item.second].type;
-	if (columns[item.second].max_length != 0) {
-	  columnsStr << "(" << columns[item.second].max_length << ")";
-	}
-	columnsStr <<
-	  (columns[item.second].primary_key ? " PRIMARY KEY" : "") <<
-	  (columns[item.second].default_value != "" ? " DEFAULT " + columns[item.second].default_value : "") <<
-	  (columns[item.second].not_null ? " NOT NULL" : "");
+	result += " (" + columnsStr.str() + foreignsStr + ")";
       }
-      result += " (" + columnsStr.str() + foreignsStr + ")";
+    } else {
+      string columnNames = "";
+      string values = "";
+      for (COLUMN col : columns) {
+	if (col.second.value != "") {
+	  columnNames += col.first + ", ";
+	  values += "\"" + col.second.value + "\", ";
+	}
+      }
+      result = "";
+      if (columnNames != "") {
+	result += "(" + columnNames.substr(0, columnNames.length() - 2) + ")";
+	result += " VALUES (" + values.substr(0, values.length() - 2) + ")";
+      }
+      isInserting = false;
     }
     return result;
   }
 
-  string &Record::operator ()(string columnName) {
+  string &Model::operator ()(string columnName) {
     return columns[columnName.c_str()].value;
   }
 
-  // COLUMN_DESC &Record::operator [](string columnName) {
+  // COLUMN_DESC &Model::operator [](string columnName) {
   //   return columns[columnName.c_str()];
   // }
   
-  // char *Record::operator [](string columnName) {
+  // char *Model::operator [](string columnName) {
   //   return columns[columnName.c_str()].value.c_str();
   // }
 
-  COLUMN_DESC &Record::operator [](string columnName) {
+  COLUMN_DESC &Model::operator [](string columnName) {
     return columns[columnName.c_str()];
   }
 
