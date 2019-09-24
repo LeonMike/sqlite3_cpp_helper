@@ -30,6 +30,7 @@ namespace sqlite3_cpp_helper_v2 {
     string type;
     int    max_length;
     bool   primary_key;
+    bool   auto_increment;
     bool   isNull;
     bool   not_null;
     string default_value;
@@ -81,6 +82,7 @@ namespace sqlite3_cpp_helper_v2 {
     Model *boolean(string name);
     
     Model *primary();
+    Model *autoincrement();
     Model *defaultValue(int value);
     Model *defaultValue(bool value);
     Model *defaultValue(float value);

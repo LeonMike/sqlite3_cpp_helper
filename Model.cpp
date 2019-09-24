@@ -169,7 +169,7 @@ namespace sqlite3_cpp_helper_v2 {
     return this;
   }
   
-  Model *Model::integer(string name) { create_column(name, "INT"); return this; }
+  Model *Model::integer(string name) { create_column(name, "INTEGER"); return this; }
   Model *Model::text(string name) { create_column(name, "TEXT"); return this; }
   Model *Model::text(string name, int max_length) { create_column(name, "VARCHAR", max_length); return this; }
   Model *Model::date(string name) { create_column(name, "DATE"); return this; }
@@ -177,6 +177,7 @@ namespace sqlite3_cpp_helper_v2 {
   Model *Model::boolean(string name) { create_column(name, "BOOLEAN"); return this; }
   
   Model *Model::primary() { isInserting = false; columns[last_column].primary_key = true; return this; }
+  Model *Model::autoincrement() { isInserting = false; columns[last_column].auto_increment = true; columns[last_column].default_value = ""; return this; }
   Model *Model::defaultValue(int value) { stringstream ss; isInserting = false; ss << value; columns[last_column].default_value = ss.str(); return this; }
   Model *Model::defaultValue(bool value) { stringstream ss; isInserting = false; ss << (value ? 1 : 0); columns[last_column].default_value = ss.str(); return this; }
   Model *Model::defaultValue(float value) { stringstream ss; isInserting = false; ss << value; columns[last_column].default_value = ss.str(); return this; }
@@ -262,6 +263,7 @@ namespace sqlite3_cpp_helper_v2 {
 	  }
 	  columnsStr <<
 	    (columns[item.second].primary_key ? " PRIMARY KEY" : "") <<
+	    (columns[item.second].auto_increment ? " AUTOINCREMENT" : "") <<
 	    (columns[item.second].default_value != "" ? " DEFAULT " + columns[item.second].default_value : "") <<
 	    (columns[item.second].not_null ? " NOT NULL" : "");
 	}

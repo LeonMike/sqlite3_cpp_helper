@@ -91,14 +91,22 @@ namespace sqlite3_cpp_helper_v2 {
 
   Table *Table::Save() {
     char *zErrMsg = 0;
+    if (lastInsertionCommand == "") GenerateSql();
     if (lastInsertionCommand != "") {
       cout << lastInsertionCommand << endl;
       int rc = sqlite3_exec(Db, lastInsertionCommand.c_str(), NULL, NULL, &zErrMsg);
       if (rc != SQLITE_OK) {
 	cout << "SQL Error: " << zErrMsg << endl;
       }
+      lastExecutedCommand = lastInsertionCommand;
+      lastInsertionCommand = "";
     }
     return this;
+  }
+
+  Table *Table::RetryLastSavingCommand() {
+    lastInsertionCommand = lastExecutedCommand;
+    Save();
   }
 
   // string Table::sqlSave() {

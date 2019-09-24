@@ -25,8 +25,9 @@ namespace sqlite3_cpp_helper_v2 {
 
   class Table {
   private:
-    bool    isInserting;
-    string  lastInsertionCommand;
+    bool   isInserting;
+    string lastInsertionCommand;
+    string lastExecutedCommand;
 
   protected:
     sqlite3 *Db;
@@ -58,6 +59,7 @@ namespace sqlite3_cpp_helper_v2 {
     Table *Set(string column, string value);
     Table *Set(string column, const char *value);
     Table *Save();
+    Table *RetryLastSavingCommand();
     
     string GenerateSql();
     
@@ -68,3 +70,4 @@ namespace sqlite3_cpp_helper_v2 {
   };
   
 }
+

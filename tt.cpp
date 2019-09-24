@@ -2,7 +2,7 @@
 
 ta::ta(sqlite3 *db): Table(db, "testing_table") {
   tableModel = (new sqlite3_cpp_helper_v2::Model())
-    ->integer("id")->primary()
+    ->integer("id")->primary()->autoincrement()
     ->text("name");
 }
 

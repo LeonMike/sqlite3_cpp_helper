@@ -30,9 +30,15 @@ void testing2() {
   
   tt *t = new tt("tab.db");
   /*cout << (*t)["testing_table"].NewRow()
-    ->Set("Id", 0)
-    ->Set("name", "Ronny Barrera")->GenerateSql();
+    ->Set("name", "Fulanito")->GenerateSql();
     (*t)["testing_table"].Save();*/
+  (*t)["testing_table"].NewRow()
+    ->Set("name", "user 1")->Save();
+  (*t)["testing_table"].NewRow()
+    ->Set("name", "usuario __2__")->Save();
+  (*t)["testing_table"].RetryLastSavingCommand();
+  (*t)["testing_table"].NewRow()
+  ->Set("name", "nuevo_usuario")->Save();
   (*t)["testing_table"].Get();
   delete t;
 }
