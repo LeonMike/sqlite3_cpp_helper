@@ -39,17 +39,12 @@ namespace sqlite3_cpp_helper_v2 {
     Table(sqlite3 *db, string name);
     Table(string name, Model *tableModel);
     Table(sqlite3 *db, string name, Model *tableModel);
-    // Table(sqlite3 *db);
-    // Table(string tableName);
-    // Table(Table &);
-    // ~Table();
+    ~Table();
 
     string name;
 
     int QueryCallback(int argc, char **argv, char **azColName);
 
-    //virtual void CreateModel() = 0;
-    
     void Create();
     
     Table *NewRow();

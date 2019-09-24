@@ -40,12 +40,6 @@ namespace sqlite3_cpp_helper_v2 {
     return 0;
   }
   
-  // Table::Table(sqlite3 *db): Db(db) {}
-  // Table::Table(Table &base): Db(base.Db) {}
-  // Table::Table(string tableName) { name = tableName; }
-  // // Table::Table(const char *tableName) { name = tableName; }
-  // Table::~Table() { /*sqlite3_close(Db); columns.clear();*/ }
-
   void Table::Create() {
     char *zErrMsg = 0;
     isInserting = false;
@@ -109,42 +103,6 @@ namespace sqlite3_cpp_helper_v2 {
     Save();
   }
 
-  // string Table::sqlSave() {
-  //   string result = "INSERT INTO " + name + " VALUES";
-  //   if (columns.size() > 0) {
-  //     stringstream columnsStr("");
-  //     /*for (COLUMN col : columns) {
-  // 	cout << "Col (" << col.first << ")" << endl <<
-  // 	  "\ttype:\t" << col.second.type << endl <<
-  // 	  "\tmax_length:\t" << col.second.max_length << endl <<
-  // 	  "\tprimary_key:\t" << col.second.primary_key << endl <<
-  // 	  "\tnot_null:\t" << col.second.not_null << endl <<
-  // 	  "\tdefault_value:\t" << col.second.default_value << endl <<
-  // 	  "\tvalue:\t" << col.second.value << endl <<
-  // 	  "\tforeign_key:\t" << col.second.foreign_key << endl <<
-  // 	  "\treference_table:\t" << col.second.reference_table << endl <<
-  // 	  "\treference_colum:\t" << col.second.reference_column << endl;
-  //     }*/
-  //     for (COLUMNS_ORDER_ITEM item : order) {
-  // 	if (columnsStr.str() != "") {
-  // 	  columnsStr << ", ";
-  // 	}
-  // 	if (!columns[item.second].isNull) {
-  // 	  if (columns[item.second].type == "TEXT" ||
-  // 	      columns[item.second].type.substr(0, 7) == "VARCHAR" ||
-  // 	      columns[item.second].type == "DATE") {
-  // 	    columnsStr << "'" << columns[item.second].value << "'";
-  // 	  } else
-  // 	    columnsStr << columns[item.second].value;
-  // 	} else {
-  // 	  columnsStr << "NULL";
-  // 	}
-  //     }
-  //     result += " (" + columnsStr.str() + ")";
-  //   }
-  //   return result;
-  // }
-  
   string Table::GenerateSql() {
     assert(tableModel != NULL);
     string result = "";

@@ -41,7 +41,6 @@ namespace sqlite3_cpp_helper_v2 {
 
     DB_TABLES_MAP tables;
     
-    //Table &New_Table(string name);
     Table *New_Table(string name);
     Table *New_Table(string name, Model *tableModel);
 
