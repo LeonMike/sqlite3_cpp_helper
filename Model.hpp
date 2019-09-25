@@ -59,17 +59,19 @@ namespace sqlite3_cpp_helper_v2 {
   
   class Model {
   private:
-    COLUMNS_MAP columns;
-    COLUMNS_ORDER order;
-
     string last_column;
     bool   isInserting;
 
     void create_column(string name, string type);
     void create_column(string name, string type, int max_length);
 
+  protected:
+    COLUMNS_MAP columns;
+    COLUMNS_ORDER order;
+    
   public:
     Model();
+    Model(const Model &base);
     ~Model();
 
     int ColumnsCount();

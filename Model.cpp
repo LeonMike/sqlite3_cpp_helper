@@ -117,7 +117,7 @@ namespace sqlite3_cpp_helper_v2 {
   }
   
   Model::Model() {}
-  //Model::Model(Table &base): {}
+  Model::Model(const Model &base) { columns = base.columns; order = base.order; }
   Model::~Model() { columns.clear(); }
 
   int Model::ColumnsCount() { return columns.size(); }

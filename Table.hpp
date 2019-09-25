@@ -18,6 +18,7 @@
 #pragma once
 
 #include <Model.hpp>
+#include <vector>
 
 using namespace std;
 
@@ -32,7 +33,8 @@ namespace sqlite3_cpp_helper_v2 {
   protected:
     sqlite3 *Db;
     Model *tableModel;
-    static int CallbackHelper(void *objPtr, int argc, char **argv, char **azColName);
+    std::vector<Model> lastQueryResult;
+    static int StaticCallback(void *objPtr, int argc, char **argv, char **azColName);
 
   public:
     Table();
@@ -43,7 +45,7 @@ namespace sqlite3_cpp_helper_v2 {
 
     string name;
 
-    int QueryCallback(int argc, char **argv, char **azColName);
+    virtual int QueryCallback(int argc, char **argv, char **azColName);
 
     void Create();
     
@@ -58,10 +60,7 @@ namespace sqlite3_cpp_helper_v2 {
     
     string GenerateSql();
     
-    void Get();
-
-    // COLUMN_DESC &operator [](string name);
-    // string operator ()(string value);
+    std::vector<Model> Get();
   };
   
 }

@@ -19,6 +19,7 @@
 #include <sstream>
 #include <iostream>
 #include <assert.h>
+#include <vector>
 
 using namespace std;
 
@@ -28,15 +29,18 @@ namespace sqlite3_cpp_helper_v2 {
   Table::Table(sqlite3 *db, string name): Db(db), name(name) {}
   Table::Table(string name, Model* recordModel): name(name), tableModel(recordModel) {}
   Table::Table(sqlite3 *db, string tableName, Model* tableModelToSave): Db(db) { name = tableName; tableModel = tableModelToSave; }
+  Table::~Table() { delete tableModel; }
 
-  int Table::CallbackHelper(void *objPtr, int argc, char **argv, char **azColName) {
+  int Table::StaticCallback(void *objPtr, int argc, char **argv, char **azColName) {
     return ((Table *)objPtr)->QueryCallback(argc, argv, azColName);
   }
 
   int Table::QueryCallback(int argc, char **argv, char **azColName) {
+    Model m(*tableModel);
     for (int i = 0; i < argc; i++) {
-      cout << "" << azColName[i] << " = " << (argv[i] ? argv[i] : "NULL") << endl;
+      m.Set(azColName[i], argv[i] ? argv[i] : "NULL");
     }
+    lastQueryResult.push_back(m);
     return 0;
   }
   
@@ -120,17 +124,14 @@ namespace sqlite3_cpp_helper_v2 {
     return result + ";";
   }
 
-  void Table::Get() {
+  std::vector<Model> Table::Get() {
     char *zErrMsg = 0;
-    int rc = sqlite3_exec(Db, ("SELECT * FROM " + name).c_str(), Table::CallbackHelper, 0, &zErrMsg);
+    int rc = sqlite3_exec(Db, ("SELECT * FROM " + name).c_str(), Table::StaticCallback, this, &zErrMsg);
     if (rc != SQLITE_OK) {
       cout << "Error: " << zErrMsg << endl;
       sqlite3_free(zErrMsg);
     }
+    return lastQueryResult;
   }
-
-  // COLUMN_DESC &Table::operator [](string name) {
-  //   return columns[name.c_str()];
-  // }
 
 }

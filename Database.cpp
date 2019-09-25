@@ -24,7 +24,11 @@ namespace sqlite3_cpp_helper_v2 {
   }
 
   Database::~Database() {
+    for (DB_TABLES_MAP::iterator it = tables.begin(); it != tables.end(); it++) {
+      delete it->second;
+    }
     sqlite3_close(Db);
+    sqlite3_free(Db);
   }
 
   Table *Database::New_Table(string name) {
