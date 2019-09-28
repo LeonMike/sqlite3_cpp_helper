@@ -15,7 +15,8 @@
   along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#ifndef __SQLITE3_CPP_HELPER_MODEL_HPP
+#define __SQLITE3_CPP_HELPER_MODEL_HPP
 
 #include <sqlite3.h>
 #include <map>
@@ -109,3 +110,5 @@ namespace sqlite3_helper {
   };
   
 }
+
+#endif
