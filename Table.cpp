@@ -23,7 +23,7 @@
 
 using namespace std;
 
-namespace sqlite3_cpp_helper_v2 {
+namespace sqlite3_helper {
 
   Table::Table() {}
   Table::Table(sqlite3 *db, string name): Db(db), name(name) {}

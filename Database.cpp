@@ -17,7 +17,7 @@
 
 #include <Database.hpp>
 
-namespace sqlite3_cpp_helper_v2 {
+namespace sqlite3_helper {
 
   Database::Database(string filepath): db_filepath(filepath) {
     sqlite3_open(db_filepath.c_str(), &Db);
