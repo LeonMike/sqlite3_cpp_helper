@@ -22,6 +22,7 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -73,7 +74,8 @@ namespace sqlite3_helper {
   public:
     Model();
     Model(const Model &base);
-    ~Model();
+
+    void Dispose();
 
     int ColumnsCount();
     

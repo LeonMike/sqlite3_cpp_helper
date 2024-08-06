@@ -29,8 +29,14 @@ namespace sqlite3_helper {
   Table::Table(sqlite3 *db, string name): Db(db), name(name) {}
   Table::Table(string name, Model* recordModel): name(name), tableModel(recordModel) {}
   Table::Table(sqlite3 *db, string tableName, Model* tableModelToSave): Db(db) { name = tableName; tableModel = tableModelToSave; }
-  Table::~Table() { delete tableModel; }
 
+  void Table::Dispose() {
+    //std::cout << "Before deleting table model" << std::endl;
+    tableModel->Dispose();
+    delete tableModel;
+    //std::cout << "After deleting table model" << std::endl;
+  }
+  
   int Table::StaticCallback(void *objPtr, int argc, char **argv, char **azColName) {
     return ((Table *)objPtr)->QueryCallback(argc, argv, azColName);
   }
@@ -49,7 +55,7 @@ namespace sqlite3_helper {
     isInserting = false;
     assert(tableModel != NULL);
     assert(Db != NULL);
-    cout << "\033[1;33mEXECUTING:\033[1;36m " << GenerateSql() << "\033[0;0m" << endl;
+    //cout << "\033[1;33mEXECUTING:\033[1;36m " << GenerateSql() << "\033[0;0m" << endl;
     int rc = sqlite3_exec(Db, GenerateSql().c_str(), NULL, NULL, &zErrMsg);
     if (rc != SQLITE_OK) {
       cout << "\033[4;31mSQL Error: " << zErrMsg << "\033[0;0m" << endl;
@@ -91,7 +97,7 @@ namespace sqlite3_helper {
     char *zErrMsg = 0;
     if (lastInsertionCommand == "") GenerateSql();
     if (lastInsertionCommand != "") {
-      cout << lastInsertionCommand << endl;
+      //cout << lastInsertionCommand << endl;
       int rc = sqlite3_exec(Db, lastInsertionCommand.c_str(), NULL, NULL, &zErrMsg);
       if (rc != SQLITE_OK) {
 	cout << "SQL Error: " << zErrMsg << endl;
@@ -126,6 +132,7 @@ namespace sqlite3_helper {
 
   std::vector<Model> Table::Get() {
     char *zErrMsg = 0;
+    //cout << "Now proceding to exec SELECT * FROM " << name << endl;
     int rc = sqlite3_exec(Db, ("SELECT * FROM " + name).c_str(), Table::StaticCallback, this, &zErrMsg);
     if (rc != SQLITE_OK) {
       cout << "Error: " << zErrMsg << endl;
@@ -134,4 +141,15 @@ namespace sqlite3_helper {
     return lastQueryResult;
   }
 
+  std::vector<Model> Table::Find(std::string expression, std::string column) {
+    char *zErrMsg = 0;
+    //cout << "Now proceding to exec SELECT * FROM " << name << endl;
+    int rc = sqlite3_exec(Db, ("SELECT * FROM " + name + " WHERE " + column + " LIKE '" + expression + "'").c_str(), Table::StaticCallback, this, &zErrMsg);
+    if (rc != SQLITE_OK) {
+      cout << "Error: " << zErrMsg << endl;
+      sqlite3_free(zErrMsg);
+    }
+    return lastQueryResult;
+  }
+  
 }

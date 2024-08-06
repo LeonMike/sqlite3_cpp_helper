@@ -16,6 +16,7 @@
 */
 
 #include <Database.hpp>
+//#include <iostream>
 
 namespace sqlite3_helper {
 
@@ -23,14 +24,20 @@ namespace sqlite3_helper {
     sqlite3_open(db_filepath.c_str(), &Db);
   }
 
-  Database::~Database() {
-    for (DB_TABLES_MAP::iterator it = tables.begin(); it != tables.end(); it++) {
-      delete it->second;
-    }
+  void Database::Dispose() {
+    //std::cout << "Freeing tables" << std::endl;
+    if (tables.size() > 0)
+      for (DB_TABLES_MAP::iterator it = tables.begin(); it != tables.end(); it++) {
+	it->second->Dispose();
+	delete it->second;
+      }
+    //std::cout << "Closing DB" << std::endl;
     sqlite3_close(Db);
+    //std::cout << "Freeing DB" << std::endl;
     sqlite3_free(Db);
+    //std::cout << "DB freed" << std::endl;
   }
-
+  
   Table *Database::New_Table(string name) {
     tables[name] = new Table(Db, name);
   }

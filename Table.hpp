@@ -42,7 +42,8 @@ namespace sqlite3_helper {
     Table(sqlite3 *db, string name);
     Table(string name, Model *tableModel);
     Table(sqlite3 *db, string name, Model *tableModel);
-    ~Table();
+
+    void Dispose();
 
     string name;
 
@@ -62,6 +63,7 @@ namespace sqlite3_helper {
     string GenerateSql();
     
     std::vector<Model> Get();
+    std::vector<Model> Find(std::string expression, std::string column);
   };
   
 }

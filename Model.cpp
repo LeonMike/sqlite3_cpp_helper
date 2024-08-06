@@ -17,7 +17,7 @@
 
 #include <Model.hpp>
 #include <sstream>
-#include <iostream>
+//#include <iostream>
 #include <assert.h>
 
 using namespace std;
@@ -118,7 +118,10 @@ namespace sqlite3_helper {
   
   Model::Model() {}
   Model::Model(const Model &base) { columns = base.columns; order = base.order; }
-  Model::~Model() { columns.clear(); }
+
+  void Model::Dispose() {
+    columns.clear();
+  }
 
   int Model::ColumnsCount() { return columns.size(); }
   
@@ -161,7 +164,7 @@ namespace sqlite3_helper {
   Model *Model::New() {
     isInserting = true;
     assert(columns.size() > 0);
-    cout << "\033[1;33mCleaning model...\033[0;0m" << endl;
+    //cout << "\033[1;33mCleaning model...\033[0;0m" << endl;
     for (COLUMN col : columns) {
       col.second.value = "";
       col.second.isNull = true;
@@ -223,7 +226,7 @@ namespace sqlite3_helper {
   }
 
   Model *Model::Set(string columnName, string value) {
-    cout << "storing: " << value << endl;
+    //cout << "storing: " << value << endl;
     //columns[columnName].value = value;
     columns[columnName] = value;
     columns[columnName].isNull = false;

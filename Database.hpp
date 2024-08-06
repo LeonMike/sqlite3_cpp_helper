@@ -38,7 +38,7 @@ namespace sqlite3_helper {
     
   public:
     Database(string filepath);
-    ~Database();
+    void Dispose();
 
     DB_TABLES_MAP tables;
     
